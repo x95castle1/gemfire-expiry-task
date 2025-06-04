@@ -3,7 +3,7 @@
 This is an example. The date and expiration logic in the java file needs to be adjusted to meet your needs. 
 
 ## What It Does
-Creates a custom expiry tasks for MarketPrices region entries using the priceTimstamp field that older than a certain range. These tasks are created when a gemfire cluster is started or new entries are created.
+Creates a custom expiry tasks for MarketPrices region entries using the priceTimstamp field that is older than a certain range. These tasks are created when a gemfire cluster is started or new entries are created.
 
 https://techdocs.broadcom.com/us/en/vmware-tanzu/data-solutions/tanzu-gemfire/10-1/gf/developing-expiration-configuring_data_expiration.html
 
