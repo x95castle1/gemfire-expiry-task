@@ -1,16 +1,11 @@
-# DeleteOldMarketPricesFunction Usage
+# ConditionalExpiry Usage
+
+This is an example. The date and expiration logic in the java file needs to be adjusted to meet your needs. 
 
 ## What It Does
-Creates a custom expiry tasks for MarketPrices region entries using the priceTimstamp field that older than a certain range.
+Creates a custom expiry tasks for MarketPrices region entries using the priceTimstamp field that older than a certain range. These tasks are created when a gemfire cluster is started or new entries are created.
 
-## Safety
-- Only deletes data older than 2 years
-- Processes data in batches to avoid memory issues
-- Logs all operations onto the cache server logs
-
-## Input
-- (Required) You must provide a timestamp as an argument in the form of a unix timestamp that includes milliseconds. Example: 1748895985671
-- (Optional) Batch Size. Defaults to deleting 10000 at a time, but can be increased or decreased as needed.
+https://techdocs.broadcom.com/us/en/vmware-tanzu/data-solutions/tanzu-gemfire/10-1/gf/developing-expiration-configuring_data_expiration.html
 
 ## Compile and Package
 
@@ -19,10 +14,10 @@ Creates a custom expiry tasks for MarketPrices region entries using the priceTim
 - GemFire installed and $GEMFIRE_HOME set on path.
 
 ### Compile and Package
-Run the compile-custom-functions.sh script to compile DeleteOldMarketPricesFunction.java and build custom-functions.jar. These files will be in the custom-functions/target directory if successful. 
+Run the compile-expiry-task.sh script to compile ConditionalExpiry.java and builds custom-expiry-tasks.jar. These files will be in the custom-expiry-tasks/target directory if successful. 
 
 ```
-./compile-custom-functions.sh
+./compile-expiry-tasks.sh
 ```
 
 ## How to Use
@@ -30,40 +25,15 @@ Run the compile-custom-functions.sh script to compile DeleteOldMarketPricesFunct
 ### 1. Deploy the JAR
 
 ```
-gfsh> deploy --jar=/path/to/custom-functions.jar
+gfsh> deploy --jar=/path/to/custom-expiry-tasks.jar
 ```
 
-### 2. Execute the Function
-
-Basic usage (default 10,000 batch size):
 ```
-gfsh> execute function --id=DeleteOldMarketPricesFunction --region=/MarketPrices --arguments=TIMESTAMP
+gfsh> alter region --name=MarketPrices --entry-time-to-live-custom-expiry=com.broadcom.expiry.ConditionalExpiry
 ```
 
-With custom batch size:
-```
-gfsh> execute function --id=DeleteOldMarketPricesFunction --region=/MarketPrices --arguments=TIMESTAMP,BATCH_SIZE
-```
+Once applied the Custom Expiry Task will fire off. You do not want to do this on a very large region.
 
-## Examples
-
-Delete entries older than January 1, 2020:
-```
-gfsh> execute function --id=DeleteOldMarketPricesFunction --region=/MarketPrices --arguments=1577836800000
-```
-
-Delete with 50,000 batch size for faster processing:
-```
-gfsh> execute function --id=DeleteOldMarketPricesFunction --region=/MarketPrices --arguments=1577836800000,50000
-```
-
-## Getting Timestamps
-
-Current time minus 2 years in milliseconds:
-- Today (June 3, 2025): 1748893011803
-- 2 years ago: 1685821011803
-
-Convert dates at: https://www.epochconverter.com/
 
 ## Monitoring
 
